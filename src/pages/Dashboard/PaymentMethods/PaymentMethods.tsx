@@ -1,17 +1,17 @@
-import React, { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { 
-  Plus, 
-  CreditCard, 
-  Wallet, 
-  Banknote, 
+import {
+  Plus,
+  CreditCard,
+  Wallet,
+  Banknote,
   MoreVertical,
   Check,
   Trash2,
   Edit,
   Loader2,
-  AlertCircle
+  AlertCircle,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -31,7 +31,9 @@ import { EditPaymentMethodModal } from "./EditPaymentMethodModal";
 
 export default function PaymentMethods() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [editingMethod, setEditingMethod] = useState<IPaymentMethod | null>(null);
+  const [editingMethod, setEditingMethod] = useState<IPaymentMethod | null>(
+    null
+  );
 
   const {
     data: paymentMethodsResponse,
@@ -39,8 +41,10 @@ export default function PaymentMethods() {
     error,
   } = useGetPaymentMethodsQuery();
 
-  const [setDefault, { isLoading: isSettingDefault }] = useSetDefaultPaymentMethodMutation();
-  const [deleteMethod, { isLoading: isDeleting }] = useDeletePaymentMethodMutation();
+  const [setDefault, { isLoading: isSettingDefault }] =
+    useSetDefaultPaymentMethodMutation();
+  const [deleteMethod, { isLoading: isDeleting }] =
+    useDeletePaymentMethodMutation();
 
   const paymentMethods = paymentMethodsResponse?.data || [];
 
@@ -53,7 +57,9 @@ export default function PaymentMethods() {
   };
 
   const handleDelete = async (paymentMethodId: string) => {
-    if (window.confirm("Are you sure you want to delete this payment method?")) {
+    if (
+      window.confirm("Are you sure you want to delete this payment method?")
+    ) {
       try {
         await deleteMethod(paymentMethodId).unwrap();
       } catch (error) {
@@ -78,13 +84,19 @@ export default function PaymentMethods() {
   const getPaymentMethodLabel = (method: IPaymentMethod) => {
     switch (method.type) {
       case "CARD":
-        return `${method.cardDetails?.cardType || 'Card'} •••• ${method.cardDetails?.lastFourDigits}`;
+        return `${method.cardDetails?.cardType || "Card"} •••• ${
+          method.cardDetails?.lastFourDigits
+        }`;
       case "WALLET":
-        return `${method.walletDetails?.walletType || 'Wallet'} - ${method.walletDetails?.walletId}`;
+        return `${method.walletDetails?.walletType || "Wallet"} - ${
+          method.walletDetails?.walletId
+        }`;
       case "CASH":
         return "Cash Payment";
       case "BANK_TRANSFER":
-        return `${method.bankDetails?.bankName || 'Bank'} - •••• ${method.bankDetails?.accountNumber?.slice(-4)}`;
+        return `${
+          method.bankDetails?.bankName || "Bank"
+        } - •••• ${method.bankDetails?.accountNumber?.slice(-4)}`;
       default:
         return "Unknown Payment Method";
     }
@@ -103,7 +115,9 @@ export default function PaymentMethods() {
     return (
       <div className="flex items-center justify-center h-64">
         <AlertCircle className="w-8 h-8 text-red-500" />
-        <span className="ml-2 text-red-500">Failed to load payment methods</span>
+        <span className="ml-2 text-red-500">
+          Failed to load payment methods
+        </span>
       </div>
     );
   }
@@ -146,16 +160,25 @@ export default function PaymentMethods() {
                         )}
                       </div>
                       <div className="text-sm text-muted-foreground">
-                        {method.type === "CARD" && method.cardDetails?.nickname && (
-                          <span>{method.cardDetails.nickname}</span>
-                        )}
-                        {method.type === "CARD" && method.cardDetails?.expiryMonth && method.cardDetails?.expiryYear && (
-                          <span className="ml-2">Expires {method.cardDetails.expiryMonth.toString().padStart(2, '0')}/{method.cardDetails.expiryYear}</span>
-                        )}
+                        {method.type === "CARD" &&
+                          method.cardDetails?.nickname && (
+                            <span>{method.cardDetails.nickname}</span>
+                          )}
+                        {method.type === "CARD" &&
+                          method.cardDetails?.expiryMonth &&
+                          method.cardDetails?.expiryYear && (
+                            <span className="ml-2">
+                              Expires{" "}
+                              {method.cardDetails.expiryMonth
+                                .toString()
+                                .padStart(2, "0")}
+                              /{method.cardDetails.expiryYear}
+                            </span>
+                          )}
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center gap-2">
                     {!method.isDefault && (
                       <Button
@@ -171,7 +194,7 @@ export default function PaymentMethods() {
                         )}
                       </Button>
                     )}
-                    
+
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="sm">
@@ -219,14 +242,14 @@ export default function PaymentMethods() {
       </div>
 
       {/* Modals */}
-      <AddPaymentMethodModal 
-        open={isAddModalOpen} 
+      <AddPaymentMethodModal
+        open={isAddModalOpen}
         onOpenChange={setIsAddModalOpen}
       />
-      
+
       {editingMethod && (
-        <EditPaymentMethodModal 
-          open={!!editingMethod} 
+        <EditPaymentMethodModal
+          open={!!editingMethod}
           onOpenChange={(open) => !open && setEditingMethod(null)}
           paymentMethod={editingMethod}
         />

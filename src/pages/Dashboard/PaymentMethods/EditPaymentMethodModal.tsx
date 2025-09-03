@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -29,19 +29,12 @@ interface EditPaymentMethodModalProps {
   paymentMethod: IPaymentMethod;
 }
 
-export function EditPaymentMethodModal({ 
-  open, 
-  onOpenChange, 
-  paymentMethod 
+export function EditPaymentMethodModal({
+  open,
+  onOpenChange,
+  paymentMethod,
 }: EditPaymentMethodModalProps) {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-    setValue,
-    watch,
-  } = useForm<FormData>({
+  const { register, handleSubmit, setValue } = useForm<FormData>({
     resolver: zodResolver(editPaymentMethodSchema),
   });
 
@@ -57,13 +50,20 @@ export function EditPaymentMethodModal({
 
   const onSubmit = async (data: FormData) => {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const updateData: any = {};
-      
-      if (data.nickname !== undefined && data.nickname !== paymentMethod.cardDetails?.nickname) {
+
+      if (
+        data.nickname !== undefined &&
+        data.nickname !== paymentMethod.cardDetails?.nickname
+      ) {
         updateData.nickname = data.nickname;
       }
-      
-      if (data.isDefault !== undefined && data.isDefault !== paymentMethod.isDefault) {
+
+      if (
+        data.isDefault !== undefined &&
+        data.isDefault !== paymentMethod.isDefault
+      ) {
         updateData.isDefault = data.isDefault;
       }
 
@@ -73,7 +73,7 @@ export function EditPaymentMethodModal({
           update: updateData,
         }).unwrap();
       }
-      
+
       onOpenChange(false);
     } catch (error) {
       console.error("Failed to update payment method:", error);
@@ -83,13 +83,19 @@ export function EditPaymentMethodModal({
   const getPaymentMethodLabel = () => {
     switch (paymentMethod.type) {
       case "CARD":
-        return `${paymentMethod.cardDetails?.cardType || 'Card'} •••• ${paymentMethod.cardDetails?.lastFourDigits}`;
+        return `${paymentMethod.cardDetails?.cardType || "Card"} •••• ${
+          paymentMethod.cardDetails?.lastFourDigits
+        }`;
       case "WALLET":
-        return `${paymentMethod.walletDetails?.walletType || 'Wallet'} - ${paymentMethod.walletDetails?.walletId}`;
+        return `${paymentMethod.walletDetails?.walletType || "Wallet"} - ${
+          paymentMethod.walletDetails?.walletId
+        }`;
       case "CASH":
         return "Cash Payment";
       case "BANK_TRANSFER":
-        return `${paymentMethod.bankDetails?.bankName || 'Bank'} - •••• ${paymentMethod.bankDetails?.accountNumber?.slice(-4)}`;
+        return `${
+          paymentMethod.bankDetails?.bankName || "Bank"
+        } - •••• ${paymentMethod.bankDetails?.accountNumber?.slice(-4)}`;
       default:
         return "Unknown Payment Method";
     }
@@ -105,7 +111,8 @@ export function EditPaymentMethodModal({
         <div className="mb-4 p-4 bg-gray-50 rounded-lg">
           <p className="text-sm font-medium">{getPaymentMethodLabel()}</p>
           <p className="text-xs text-muted-foreground mt-1">
-            {paymentMethod.type.replace('_', ' ')} • Added {new Date(paymentMethod.createdAt).toLocaleDateString()}
+            {paymentMethod.type.replace("_", " ")} • Added{" "}
+            {new Date(paymentMethod.createdAt).toLocaleDateString()}
           </p>
         </div>
 
@@ -128,12 +135,12 @@ export function EditPaymentMethodModal({
 
           {/* Set as Default */}
           <div className="flex items-center space-x-2">
-            <Checkbox 
-              id="isDefault" 
+            <Checkbox
+              id="isDefault"
               defaultChecked={paymentMethod.isDefault}
               onCheckedChange={(checked) => setValue("isDefault", !!checked)}
             />
-            <Label 
+            <Label
               htmlFor="isDefault"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
