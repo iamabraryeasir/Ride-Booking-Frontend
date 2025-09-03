@@ -4,14 +4,11 @@ import type {
   IUser,
   IDriver,
   IRide,
-  IAdminStats,
   ISystemReport,
   IPaginatedResponse,
   IUserFilters,
   IDriverFilters,
   IRideFilters,
-  IUserManagementAction,
-  IDriverManagementAction
 } from "@/types";
 
 export const adminApi = baseApi.injectEndpoints({
@@ -25,32 +22,42 @@ export const adminApi = baseApi.injectEndpoints({
       providesTags: ["REPORTS"],
     }),
 
-    getDailyAnalytics: builder.query<IResponse<{
-      totalRides: number;
-      completedRides: number;
-      cancelledRides: number;
-      totalRevenue: number;
-      averageFare: number;
-      topRiders: Array<{ user: IUser; ridesCount: number }>;
-      topDrivers: Array<{ driver: IDriver; ridesCount: number }>;
-    }>, void>({
+    getDailyAnalytics: builder.query<
+      IResponse<{
+        totalRides: number;
+        completedRides: number;
+        cancelledRides: number;
+        totalRevenue: number;
+        averageFare: number;
+        topRiders: Array<{ user: IUser; ridesCount: number }>;
+        topDrivers: Array<{ driver: IDriver; ridesCount: number }>;
+      }>,
+      void
+    >({
       query: () => ({
         url: "/reports/daily-analytics",
-        method: "GET", 
+        method: "GET",
       }),
       providesTags: ["REPORTS"],
     }),
 
-    getMonthlyAnalytics: builder.query<IResponse<{
-      totalRides: number;
-      totalRevenue: number;
-      averageFare: number;
-      ridesByDay: Array<{ date: string; rides: number; revenue: number }>;
-      topPerformers: {
-        riders: Array<{ user: IUser; ridesCount: number }>;
-        drivers: Array<{ driver: IDriver; ridesCount: number; earnings: number }>;
-      };
-    }>, void>({
+    getMonthlyAnalytics: builder.query<
+      IResponse<{
+        totalRides: number;
+        totalRevenue: number;
+        averageFare: number;
+        ridesByDay: Array<{ date: string; rides: number; revenue: number }>;
+        topPerformers: {
+          riders: Array<{ user: IUser; ridesCount: number }>;
+          drivers: Array<{
+            driver: IDriver;
+            ridesCount: number;
+            earnings: number;
+          }>;
+        };
+      }>,
+      void
+    >({
       query: () => ({
         url: "/reports/monthly-analytics",
         method: "GET",
@@ -58,14 +65,21 @@ export const adminApi = baseApi.injectEndpoints({
       providesTags: ["REPORTS"],
     }),
 
-    getDriverActivityStats: builder.query<IResponse<{
-      totalDrivers: number;
-      onlineDrivers: number;
-      offlineDrivers: number;
-      averageRating: number;
-      totalEarnings: number;
-      topDrivers: Array<{ driver: IDriver; earnings: number; rating: number }>;
-    }>, void>({
+    getDriverActivityStats: builder.query<
+      IResponse<{
+        totalDrivers: number;
+        onlineDrivers: number;
+        offlineDrivers: number;
+        averageRating: number;
+        totalEarnings: number;
+        topDrivers: Array<{
+          driver: IDriver;
+          earnings: number;
+          rating: number;
+        }>;
+      }>,
+      void
+    >({
       query: () => ({
         url: "/reports/driver-activity",
         method: "GET",
@@ -73,12 +87,15 @@ export const adminApi = baseApi.injectEndpoints({
       providesTags: ["REPORTS"],
     }),
 
-    getRevenueTrends: builder.query<IResponse<{
-      daily: Array<{ date: string; revenue: number; rides: number }>;
-      weekly: Array<{ week: string; revenue: number; rides: number }>;
-      monthly: Array<{ month: string; revenue: number; rides: number }>;
-      yearly: Array<{ year: string; revenue: number; rides: number }>;
-    }>, { period: 'daily' | 'weekly' | 'monthly' | 'yearly'; days?: number }>({
+    getRevenueTrends: builder.query<
+      IResponse<{
+        daily: Array<{ date: string; revenue: number; rides: number }>;
+        weekly: Array<{ week: string; revenue: number; rides: number }>;
+        monthly: Array<{ month: string; revenue: number; rides: number }>;
+        yearly: Array<{ year: string; revenue: number; rides: number }>;
+      }>,
+      { period: "daily" | "weekly" | "monthly" | "yearly"; days?: number }
+    >({
       query: (params) => ({
         url: "/reports/revenue-trends",
         method: "GET",
@@ -88,7 +105,10 @@ export const adminApi = baseApi.injectEndpoints({
     }),
 
     // User Management
-    getAllUsers: builder.query<IResponse<IPaginatedResponse<IUser>>, IUserFilters>({
+    getAllUsers: builder.query<
+      IResponse<IPaginatedResponse<IUser>>,
+      IUserFilters
+    >({
       query: (filters) => ({
         url: "/users",
         method: "GET",
@@ -106,7 +126,10 @@ export const adminApi = baseApi.injectEndpoints({
     }),
 
     // Driver Management
-    getAllDrivers: builder.query<IResponse<IPaginatedResponse<IDriver>>, IDriverFilters>({
+    getAllDrivers: builder.query<
+      IResponse<IPaginatedResponse<IDriver>>,
+      IDriverFilters
+    >({
       query: (filters) => ({
         url: "/drivers",
         method: "GET",
@@ -123,7 +146,10 @@ export const adminApi = baseApi.injectEndpoints({
       invalidatesTags: ["DRIVER"],
     }),
 
-    rejectDriver: builder.mutation<IResponse<IDriver>, { driverId: string; rejectionReason: string }>({
+    rejectDriver: builder.mutation<
+      IResponse<IDriver>,
+      { driverId: string; rejectionReason: string }
+    >({
       query: ({ driverId, rejectionReason }) => ({
         url: `/drivers/reject/${driverId}`,
         method: "PATCH",
@@ -141,7 +167,10 @@ export const adminApi = baseApi.injectEndpoints({
     }),
 
     // Ride Management
-    getAllRides: builder.query<IResponse<IPaginatedResponse<IRide>>, IRideFilters>({
+    getAllRides: builder.query<
+      IResponse<IPaginatedResponse<IRide>>,
+      IRideFilters
+    >({
       query: (filters) => ({
         url: "/rides",
         method: "GET",
@@ -159,11 +188,14 @@ export const adminApi = baseApi.injectEndpoints({
     }),
 
     // Analytics endpoints
-    getRevenueAnalytics: builder.query<IResponse<{
-      daily: Array<{ date: string; revenue: number; rides: number }>;
-      weekly: Array<{ week: string; revenue: number; rides: number }>;
-      monthly: Array<{ month: string; revenue: number; rides: number }>;
-    }>, { period: 'daily' | 'weekly' | 'monthly'; days?: number }>({
+    getRevenueAnalytics: builder.query<
+      IResponse<{
+        daily: Array<{ date: string; revenue: number; rides: number }>;
+        weekly: Array<{ week: string; revenue: number; rides: number }>;
+        monthly: Array<{ month: string; revenue: number; rides: number }>;
+      }>,
+      { period: "daily" | "weekly" | "monthly"; days?: number }
+    >({
       query: (params) => ({
         url: "/admin/analytics/revenue",
         method: "GET",
@@ -172,11 +204,14 @@ export const adminApi = baseApi.injectEndpoints({
       providesTags: ["REPORTS"],
     }),
 
-    getUserAnalytics: builder.query<IResponse<{
-      registrations: Array<{ date: string; riders: number; drivers: number }>;
-      activeUsers: Array<{ date: string; count: number }>;
-      usersByRole: { riders: number; drivers: number; admins: number };
-    }>, { period: 'daily' | 'weekly' | 'monthly'; days?: number }>({
+    getUserAnalytics: builder.query<
+      IResponse<{
+        registrations: Array<{ date: string; riders: number; drivers: number }>;
+        activeUsers: Array<{ date: string; count: number }>;
+        usersByRole: { riders: number; drivers: number; admins: number };
+      }>,
+      { period: "daily" | "weekly" | "monthly"; days?: number }
+    >({
       query: (params) => ({
         url: "/admin/analytics/users",
         method: "GET",
@@ -185,13 +220,16 @@ export const adminApi = baseApi.injectEndpoints({
       providesTags: ["REPORTS"],
     }),
 
-    getRideAnalytics: builder.query<IResponse<{
-      ridesByStatus: { [key: string]: number };
-      ridesByDate: Array<{ date: string; rides: number }>;
-      averageRideDistance: number;
-      averageRideFare: number;
-      peakHours: Array<{ hour: number; rides: number }>;
-    }>, { period: 'daily' | 'weekly' | 'monthly'; days?: number }>({
+    getRideAnalytics: builder.query<
+      IResponse<{
+        ridesByStatus: { [key: string]: number };
+        ridesByDate: Array<{ date: string; rides: number }>;
+        averageRideDistance: number;
+        averageRideFare: number;
+        peakHours: Array<{ hour: number; rides: number }>;
+      }>,
+      { period: "daily" | "weekly" | "monthly"; days?: number }
+    >({
       query: (params) => ({
         url: "/admin/analytics/rides",
         method: "GET",
@@ -206,16 +244,16 @@ export const adminApi = baseApi.injectEndpoints({
         url: "/admin/export/users",
         method: "POST",
         data: filters,
-        responseType: 'blob',
+        responseType: "blob",
       }),
     }),
 
     exportRides: builder.mutation<Blob, IRideFilters>({
       query: (filters) => ({
-        url: "/admin/export/rides", 
+        url: "/admin/export/rides",
         method: "POST",
         data: filters,
-        responseType: 'blob',
+        responseType: "blob",
       }),
     }),
   }),
@@ -228,26 +266,26 @@ export const {
   useGetMonthlyAnalyticsQuery,
   useGetDriverActivityStatsQuery,
   useGetRevenueTrendsQuery,
-  
+
   // User Management
   useGetAllUsersQuery,
   useToggleBlockUserMutation,
-  
-  // Driver Management  
+
+  // Driver Management
   useGetAllDriversQuery,
   useApproveDriverMutation,
   useRejectDriverMutation,
   useToggleSuspendDriverMutation,
-  
+
   // Ride Management
   useGetAllRidesQuery,
   useGetRideDetailsQuery,
-  
+
   // Legacy Analytics (remove if not used)
   useGetRevenueAnalyticsQuery,
   useGetUserAnalyticsQuery,
   useGetRideAnalyticsQuery,
-  
+
   // Export
   useExportUsersMutation,
   useExportRidesMutation,

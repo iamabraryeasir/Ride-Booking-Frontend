@@ -1,4 +1,4 @@
-import { TUserRole, TUserStatus, TDriverStatus } from '@/constants/role';
+import type { TUserRole, TUserStatus, TDriverStatus } from '@/constants/role';
 
 export interface IUser {
   _id: string;
@@ -56,6 +56,7 @@ export interface IRider extends Omit<IUser, 'role'> {
     id: string;
     type: 'CASH' | 'CARD' | 'WALLET';
     isDefault: boolean;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     details?: any;
   }>;
   rating: number;
