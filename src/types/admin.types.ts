@@ -1,6 +1,6 @@
-import { IUser, IDriver, IRider } from './user.types';
-import { IRide } from './ride.types';
-import { TUserStatus, TDriverStatus, TRideStatus } from '@/constants/role';
+import type { IDriver } from "./user.types";
+import type { IRide } from "./ride.types";
+import type { TUserStatus, TDriverStatus } from "@/constants/role";
 
 export interface IAdminStats {
   users: {
@@ -43,26 +43,26 @@ export interface IRevenueData {
 }
 
 export interface IUserFilters {
-  role?: 'RIDER' | 'DRIVER' | 'ADMIN';
+  role?: "RIDER" | "DRIVER" | "ADMIN";
   status?: TUserStatus;
   search?: string;
   dateFrom?: string;
   dateTo?: string;
   page?: number;
   limit?: number;
-  sortBy?: 'createdAt' | 'name' | 'email';
-  sortOrder?: 'asc' | 'desc';
+  sortBy?: "createdAt" | "name" | "email";
+  sortOrder?: "asc" | "desc";
 }
 
 export interface IDriverFilters {
   status?: TDriverStatus;
   isApproved?: boolean;
   search?: string;
-  vehicleType?: 'CAR' | 'MOTORCYCLE' | 'BICYCLE';
+  vehicleType?: "CAR" | "MOTORCYCLE" | "BICYCLE";
   page?: number;
   limit?: number;
-  sortBy?: 'createdAt' | 'name' | 'rating' | 'totalRides';
-  sortOrder?: 'asc' | 'desc';
+  sortBy?: "createdAt" | "name" | "rating" | "totalRides";
+  sortOrder?: "asc" | "desc";
 }
 
 export interface IPaginatedResponse<T> {
@@ -79,19 +79,24 @@ export interface IPaginatedResponse<T> {
 
 export interface IUserManagementAction {
   userId: string;
-  action: 'BLOCK' | 'UNBLOCK' | 'SUSPEND' | 'ACTIVATE';
+  action: "BLOCK" | "UNBLOCK" | "SUSPEND" | "ACTIVATE";
   reason?: string;
 }
 
 export interface IDriverManagementAction {
   driverId: string;
-  action: 'APPROVE' | 'REJECT' | 'SUSPEND' | 'UNSUSPEND';
+  action: "APPROVE" | "REJECT" | "SUSPEND" | "UNSUSPEND";
   reason?: string;
 }
 
 export interface ISystemReport {
   overview: IAdminStats;
   revenueChart: IRevenueData[];
+  recentActivity: [string];
+  disputedRides: number;
+  blockedUsers: number;
+  totalUsers: number;
+  activeRides: number;
   topDrivers: Array<{
     driver: IDriver;
     earnings: number;
@@ -99,9 +104,9 @@ export interface ISystemReport {
   }>;
   recentRides: IRide[];
   activeIssues: Array<{
-    type: 'USER_COMPLAINT' | 'DRIVER_ISSUE' | 'SYSTEM_ERROR';
+    type: "USER_COMPLAINT" | "DRIVER_ISSUE" | "SYSTEM_ERROR";
     description: string;
-    severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+    severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
     createdAt: string;
   }>;
 }

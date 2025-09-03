@@ -33,20 +33,16 @@ export default function AdminDashboard() {
     error: systemReportError,
   } = useGetSystemReportQuery();
 
-  const {
-    data: dailyAnalyticsResponse,
-    isLoading: isDailyAnalyticsLoading,
-  } = useGetDailyAnalyticsQuery();
+  const { data: dailyAnalyticsResponse, isLoading: isDailyAnalyticsLoading } =
+    useGetDailyAnalyticsQuery();
 
-  const {
-    data: driverActivityResponse,
-    isLoading: isDriverActivityLoading,
-  } = useGetDriverActivityStatsQuery();
+  const { data: driverActivityResponse, isLoading: isDriverActivityLoading } =
+    useGetDriverActivityStatsQuery();
 
-  const {
-    data: driversResponse,
-    isLoading: isDriversLoading,
-  } = useGetAllDriversQuery({ page: 1, limit: 10 });
+  const { data: driversResponse } = useGetAllDriversQuery({
+    page: 1,
+    limit: 10,
+  });
 
   // Extract data from API responses
   const systemReport = systemReportResponse?.data;
@@ -55,7 +51,8 @@ export default function AdminDashboard() {
   const driversData = driversResponse?.data;
 
   // Show loading state
-  const isLoading = isSystemReportLoading || isDailyAnalyticsLoading || isDriverActivityLoading;
+  const isLoading =
+    isSystemReportLoading || isDailyAnalyticsLoading || isDriverActivityLoading;
 
   if (isLoading) {
     return (
@@ -94,7 +91,7 @@ export default function AdminDashboard() {
     },
     {
       title: "Total Revenue",
-      value: dailyAnalytics?.totalRevenue 
+      value: dailyAnalytics?.totalRevenue
         ? `$${(dailyAnalytics.totalRevenue / 1000).toFixed(0)}K`
         : "$0",
       icon: DollarSign,
@@ -107,29 +104,26 @@ export default function AdminDashboard() {
       value: systemReport?.activeRides?.toString() || "0",
       icon: Clock,
       color: "text-orange-600",
-      change: dailyAnalytics?.completedRides 
-        ? `${dailyAnalytics.completedRides - dailyAnalytics.cancelledRides}` 
+      change: dailyAnalytics?.completedRides
+        ? `${dailyAnalytics.completedRides - dailyAnalytics.cancelledRides}`
         : "0",
       trend: "up",
     },
   ];
 
-  // Recent activity from real data or system report  
-  const recentActivity = systemReport?.recentActivity || [];
-  
-  // If no real activity data, show meaningful placeholder
-  const hasActivityData = recentActivity.length > 0;
-
   // Calculate pending tasks from real data
-  const pendingDrivers = driversData?.data?.filter(driver => driver.status === 'pending')?.length || 0;
+  const pendingDrivers =
+    driversData?.data?.filter((driver) => driver.status === "PENDING")
+      ?.length || 0;
   const disputedRides = systemReport?.disputedRides || 0;
   const blockedUsers = systemReport?.blockedUsers || 0;
-  
+
   const pendingTasks = [
     {
       task: "Driver applications pending approval",
       count: pendingDrivers,
-      urgency: pendingDrivers > 10 ? "high" : pendingDrivers > 5 ? "medium" : "low",
+      urgency:
+        pendingDrivers > 10 ? "high" : pendingDrivers > 5 ? "medium" : "low",
       href: "/dashboard/drivers",
     },
     {
@@ -141,10 +135,11 @@ export default function AdminDashboard() {
     {
       task: "Ride disputes to resolve",
       count: disputedRides,
-      urgency: disputedRides > 2 ? "high" : disputedRides > 0 ? "medium" : "low",
+      urgency:
+        disputedRides > 2 ? "high" : disputedRides > 0 ? "medium" : "low",
       href: "/dashboard/rides",
     },
-  ].filter(task => task.count > 0); // Only show tasks with actual pending items
+  ].filter((task) => task.count > 0); // Only show tasks with actual pending items
 
   return (
     <div className="space-y-6">
@@ -305,39 +300,6 @@ export default function AdminDashboard() {
               </Button>
             </div>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {hasActivityData ? (
-                recentActivity.map((activity) => (
-                  <div key={activity.id} className="flex items-start gap-3">
-                    <div
-                      className={`w-2 h-2 rounded-full mt-2 ${
-                        activity.status === "success"
-                          ? "bg-green-500"
-                          : activity.status === "warning"
-                          ? "bg-yellow-500"
-                          : "bg-blue-500"
-                      }`}
-                    />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium">
-                        {activity.description}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {activity.time}
-                      </p>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  <Clock className="w-8 h-8 mx-auto mb-2" />
-                  <p>No recent activity to display</p>
-                  <p className="text-xs">Activity will appear here as users interact with the platform</p>
-                </div>
-              )}
-            </div>
-          </CardContent>
         </Card>
 
         {/* System Health */}
