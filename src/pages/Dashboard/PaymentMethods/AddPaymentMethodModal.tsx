@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -20,114 +20,115 @@ import {
 } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
-import { CreditCard, Wallet, Banknote, Building, Loader2 } from "lucide-react";
+import { CreditCard, Wallet, Building, Loader2 } from "lucide-react";
 import { useAddPaymentMethodMutation } from "@/redux/features/payment/payment.api";
-import type { TPaymentMethodType } from "@/types";
 
-const addPaymentMethodSchema = z.object({
-  type: z.enum(["CARD", "WALLET", "BANK_TRANSFER"]),
-  isDefault: z.boolean().optional(),
-  
-  // Card details
-  cardNumber: z.string().optional(),
-  expiryMonth: z.number().optional(),
-  expiryYear: z.number().optional(),
-  cvv: z.string().optional(),
-  cardHolderName: z.string().optional(),
-  nickname: z.string().optional(),
-  
-  // Wallet details
-  walletType: z.string().optional(),
-  walletId: z.string().optional(),
-  
-  // Bank details
-  accountNumber: z.string().optional(),
-  routingNumber: z.string().optional(),
-  bankName: z.string().optional(),
-  accountHolderName: z.string().optional(),
-}).superRefine((data, ctx) => {
-  if (data.type === "CARD") {
-    if (!data.cardNumber) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Card number is required",
-        path: ["cardNumber"],
-      });
+const addPaymentMethodSchema = z
+  .object({
+    type: z.enum(["CARD", "WALLET", "BANK_TRANSFER"]),
+    isDefault: z.boolean().optional(),
+
+    // Card details
+    cardNumber: z.string().optional(),
+    expiryMonth: z.number().optional(),
+    expiryYear: z.number().optional(),
+    cvv: z.string().optional(),
+    cardHolderName: z.string().optional(),
+    nickname: z.string().optional(),
+
+    // Wallet details
+    walletType: z.string().optional(),
+    walletId: z.string().optional(),
+
+    // Bank details
+    accountNumber: z.string().optional(),
+    routingNumber: z.string().optional(),
+    bankName: z.string().optional(),
+    accountHolderName: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.type === "CARD") {
+      if (!data.cardNumber) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Card number is required",
+          path: ["cardNumber"],
+        });
+      }
+      if (!data.expiryMonth || data.expiryMonth < 1 || data.expiryMonth > 12) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Valid expiry month is required",
+          path: ["expiryMonth"],
+        });
+      }
+      if (!data.expiryYear) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Expiry year is required",
+          path: ["expiryYear"],
+        });
+      }
+      if (!data.cvv) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "CVV is required",
+          path: ["cvv"],
+        });
+      }
+      if (!data.cardHolderName) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Card holder name is required",
+          path: ["cardHolderName"],
+        });
+      }
+    } else if (data.type === "WALLET") {
+      if (!data.walletType) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Wallet type is required",
+          path: ["walletType"],
+        });
+      }
+      if (!data.walletId) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Wallet ID is required",
+          path: ["walletId"],
+        });
+      }
+    } else if (data.type === "BANK_TRANSFER") {
+      if (!data.accountNumber) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Account number is required",
+          path: ["accountNumber"],
+        });
+      }
+      if (!data.routingNumber) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Routing number is required",
+          path: ["routingNumber"],
+        });
+      }
+      if (!data.bankName) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Bank name is required",
+          path: ["bankName"],
+        });
+      }
+      if (!data.accountHolderName) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Account holder name is required",
+          path: ["accountHolderName"],
+        });
+      }
     }
-    if (!data.expiryMonth || data.expiryMonth < 1 || data.expiryMonth > 12) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Valid expiry month is required",
-        path: ["expiryMonth"],
-      });
-    }
-    if (!data.expiryYear) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Expiry year is required",
-        path: ["expiryYear"],
-      });
-    }
-    if (!data.cvv) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "CVV is required",
-        path: ["cvv"],
-      });
-    }
-    if (!data.cardHolderName) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Card holder name is required",
-        path: ["cardHolderName"],
-      });
-    }
-  } else if (data.type === "WALLET") {
-    if (!data.walletType) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Wallet type is required",
-        path: ["walletType"],
-      });
-    }
-    if (!data.walletId) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Wallet ID is required", 
-        path: ["walletId"],
-      });
-    }
-  } else if (data.type === "BANK_TRANSFER") {
-    if (!data.accountNumber) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Account number is required",
-        path: ["accountNumber"],
-      });
-    }
-    if (!data.routingNumber) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Routing number is required",
-        path: ["routingNumber"],
-      });
-    }
-    if (!data.bankName) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Bank name is required",
-        path: ["bankName"],
-      });
-    }
-    if (!data.accountHolderName) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Account holder name is required",
-        path: ["accountHolderName"],
-      });
-    }
-  }
-});
+  });
 
 type FormData = z.infer<typeof addPaymentMethodSchema>;
 
@@ -136,16 +137,20 @@ interface AddPaymentMethodModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export function AddPaymentMethodModal({ open, onOpenChange }: AddPaymentMethodModalProps) {
-  const [selectedType, setSelectedType] = useState<TPaymentMethodType>("CARD");
-  
+export function AddPaymentMethodModal({
+  open,
+  onOpenChange,
+}: AddPaymentMethodModalProps) {
+  const [selectedType, setSelectedType] = useState<
+    "CARD" | "WALLET" | "BANK_TRANSFER"
+  >("CARD");
+
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
     setValue,
-    watch,
   } = useForm<FormData>({
     resolver: zodResolver(addPaymentMethodSchema),
     defaultValues: {
@@ -156,13 +161,14 @@ export function AddPaymentMethodModal({ open, onOpenChange }: AddPaymentMethodMo
 
   const [addPaymentMethod, { isLoading }] = useAddPaymentMethodMutation();
 
-  const handleTypeChange = (type: TPaymentMethodType) => {
+  const handleTypeChange = (type: "CARD" | "WALLET" | "BANK_TRANSFER") => {
     setSelectedType(type);
     setValue("type", type);
   };
 
   const onSubmit = async (data: FormData) => {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const payload: any = {
         type: data.type,
         isDefault: data.isDefault,
@@ -220,21 +226,30 @@ export function AddPaymentMethodModal({ open, onOpenChange }: AddPaymentMethodMo
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="CARD" id="card" />
-                <Label htmlFor="card" className="flex items-center gap-2 cursor-pointer">
+                <Label
+                  htmlFor="card"
+                  className="flex items-center gap-2 cursor-pointer"
+                >
                   <CreditCard className="w-4 h-4" />
                   Card
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="WALLET" id="wallet" />
-                <Label htmlFor="wallet" className="flex items-center gap-2 cursor-pointer">
+                <Label
+                  htmlFor="wallet"
+                  className="flex items-center gap-2 cursor-pointer"
+                >
                   <Wallet className="w-4 h-4" />
                   Wallet
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="BANK_TRANSFER" id="bank" />
-                <Label htmlFor="bank" className="flex items-center gap-2 cursor-pointer">
+                <Label
+                  htmlFor="bank"
+                  className="flex items-center gap-2 cursor-pointer"
+                >
                   <Building className="w-4 h-4" />
                   Bank
                 </Label>
@@ -255,7 +270,9 @@ export function AddPaymentMethodModal({ open, onOpenChange }: AddPaymentMethodMo
                     className={errors.cardNumber ? "border-red-500" : ""}
                   />
                   {errors.cardNumber && (
-                    <p className="text-red-500 text-xs mt-1">{errors.cardNumber.message}</p>
+                    <p className="text-red-500 text-xs mt-1">
+                      {errors.cardNumber.message}
+                    </p>
                   )}
                 </div>
                 <div>
@@ -267,7 +284,9 @@ export function AddPaymentMethodModal({ open, onOpenChange }: AddPaymentMethodMo
                     className={errors.cardHolderName ? "border-red-500" : ""}
                   />
                   {errors.cardHolderName && (
-                    <p className="text-red-500 text-xs mt-1">{errors.cardHolderName.message}</p>
+                    <p className="text-red-500 text-xs mt-1">
+                      {errors.cardHolderName.message}
+                    </p>
                   )}
                 </div>
               </div>
@@ -275,24 +294,38 @@ export function AddPaymentMethodModal({ open, onOpenChange }: AddPaymentMethodMo
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <Label htmlFor="expiryMonth">Month</Label>
-                  <Select onValueChange={(value) => setValue("expiryMonth", Number(value))}>
-                    <SelectTrigger className={errors.expiryMonth ? "border-red-500" : ""}>
+                  <Select
+                    onValueChange={(value) =>
+                      setValue("expiryMonth", Number(value))
+                    }
+                  >
+                    <SelectTrigger
+                      className={errors.expiryMonth ? "border-red-500" : ""}
+                    >
                       <SelectValue placeholder="MM" />
                     </SelectTrigger>
                     <SelectContent>
-                      {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
-                        <SelectItem key={month} value={month.toString()}>
-                          {month.toString().padStart(2, "0")}
-                        </SelectItem>
-                      ))}
+                      {Array.from({ length: 12 }, (_, i) => i + 1).map(
+                        (month) => (
+                          <SelectItem key={month} value={month.toString()}>
+                            {month.toString().padStart(2, "0")}
+                          </SelectItem>
+                        )
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div>
                   <Label htmlFor="expiryYear">Year</Label>
-                  <Select onValueChange={(value) => setValue("expiryYear", Number(value))}>
-                    <SelectTrigger className={errors.expiryYear ? "border-red-500" : ""}>
+                  <Select
+                    onValueChange={(value) =>
+                      setValue("expiryYear", Number(value))
+                    }
+                  >
+                    <SelectTrigger
+                      className={errors.expiryYear ? "border-red-500" : ""}
+                    >
                       <SelectValue placeholder="YYYY" />
                     </SelectTrigger>
                     <SelectContent>
@@ -315,7 +348,9 @@ export function AddPaymentMethodModal({ open, onOpenChange }: AddPaymentMethodMo
                     className={errors.cvv ? "border-red-500" : ""}
                   />
                   {errors.cvv && (
-                    <p className="text-red-500 text-xs mt-1">{errors.cvv.message}</p>
+                    <p className="text-red-500 text-xs mt-1">
+                      {errors.cvv.message}
+                    </p>
                   )}
                 </div>
               </div>
@@ -336,8 +371,12 @@ export function AddPaymentMethodModal({ open, onOpenChange }: AddPaymentMethodMo
             <div className="space-y-4">
               <div>
                 <Label htmlFor="walletType">Wallet Type</Label>
-                <Select onValueChange={(value) => setValue("walletType", value)}>
-                  <SelectTrigger className={errors.walletType ? "border-red-500" : ""}>
+                <Select
+                  onValueChange={(value) => setValue("walletType", value)}
+                >
+                  <SelectTrigger
+                    className={errors.walletType ? "border-red-500" : ""}
+                  >
                     <SelectValue placeholder="Select wallet type" />
                   </SelectTrigger>
                   <SelectContent>
@@ -348,7 +387,9 @@ export function AddPaymentMethodModal({ open, onOpenChange }: AddPaymentMethodMo
                   </SelectContent>
                 </Select>
                 {errors.walletType && (
-                  <p className="text-red-500 text-xs mt-1">{errors.walletType.message}</p>
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.walletType.message}
+                  </p>
                 )}
               </div>
 
@@ -361,7 +402,9 @@ export function AddPaymentMethodModal({ open, onOpenChange }: AddPaymentMethodMo
                   className={errors.walletId ? "border-red-500" : ""}
                 />
                 {errors.walletId && (
-                  <p className="text-red-500 text-xs mt-1">{errors.walletId.message}</p>
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.walletId.message}
+                  </p>
                 )}
               </div>
             </div>
@@ -380,7 +423,9 @@ export function AddPaymentMethodModal({ open, onOpenChange }: AddPaymentMethodMo
                     className={errors.bankName ? "border-red-500" : ""}
                   />
                   {errors.bankName && (
-                    <p className="text-red-500 text-xs mt-1">{errors.bankName.message}</p>
+                    <p className="text-red-500 text-xs mt-1">
+                      {errors.bankName.message}
+                    </p>
                   )}
                 </div>
                 <div>
@@ -392,7 +437,9 @@ export function AddPaymentMethodModal({ open, onOpenChange }: AddPaymentMethodMo
                     className={errors.accountHolderName ? "border-red-500" : ""}
                   />
                   {errors.accountHolderName && (
-                    <p className="text-red-500 text-xs mt-1">{errors.accountHolderName.message}</p>
+                    <p className="text-red-500 text-xs mt-1">
+                      {errors.accountHolderName.message}
+                    </p>
                   )}
                 </div>
               </div>
@@ -407,7 +454,9 @@ export function AddPaymentMethodModal({ open, onOpenChange }: AddPaymentMethodMo
                     className={errors.accountNumber ? "border-red-500" : ""}
                   />
                   {errors.accountNumber && (
-                    <p className="text-red-500 text-xs mt-1">{errors.accountNumber.message}</p>
+                    <p className="text-red-500 text-xs mt-1">
+                      {errors.accountNumber.message}
+                    </p>
                   )}
                 </div>
                 <div>
@@ -419,7 +468,9 @@ export function AddPaymentMethodModal({ open, onOpenChange }: AddPaymentMethodMo
                     className={errors.routingNumber ? "border-red-500" : ""}
                   />
                   {errors.routingNumber && (
-                    <p className="text-red-500 text-xs mt-1">{errors.routingNumber.message}</p>
+                    <p className="text-red-500 text-xs mt-1">
+                      {errors.routingNumber.message}
+                    </p>
                   )}
                 </div>
               </div>
@@ -428,11 +479,11 @@ export function AddPaymentMethodModal({ open, onOpenChange }: AddPaymentMethodMo
 
           {/* Set as Default */}
           <div className="flex items-center space-x-2">
-            <Checkbox 
-              id="isDefault" 
+            <Checkbox
+              id="isDefault"
               onCheckedChange={(checked) => setValue("isDefault", !!checked)}
             />
-            <Label 
+            <Label
               htmlFor="isDefault"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
