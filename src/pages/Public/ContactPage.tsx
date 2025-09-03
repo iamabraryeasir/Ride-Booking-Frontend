@@ -1,4 +1,3 @@
-import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -8,15 +7,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Clock, 
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Clock,
   Send,
   MessageSquare,
   Users,
-  Headphones
+  Headphones,
 } from "lucide-react";
 
 // Contact form schema
@@ -36,26 +35,26 @@ const contactInfo = [
     icon: Mail,
     title: "Email Us",
     details: "support@rideease.com",
-    description: "Send us an email and we'll respond within 24 hours"
+    description: "Send us an email and we'll respond within 24 hours",
   },
   {
     icon: Phone,
     title: "Call Us",
     details: "+1 (555) 123-4567",
-    description: "Speak with our customer service team"
+    description: "Speak with our customer service team",
   },
   {
     icon: MapPin,
     title: "Visit Us",
     details: "123 Innovation Drive, Tech Valley, CA 94025",
-    description: "Stop by our headquarters"
+    description: "Stop by our headquarters",
   },
   {
     icon: Clock,
     title: "Business Hours",
     details: "24/7 Support Available",
-    description: "We're here when you need us"
-  }
+    description: "We're here when you need us",
+  },
 ];
 
 const inquiryTypes = [
@@ -71,21 +70,24 @@ export default function ContactPage() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    reset
+    reset,
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
     defaultValues: {
-      inquiryType: "general"
-    }
+      inquiryType: "general",
+    },
   });
 
-  const onSubmit = async (data: ContactFormData) => {
+  const onSubmit = async () => {
     try {
       // Simulate form submission
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      toast.success("Thank you for your message! We'll get back to you within 24 hours.");
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      toast.success(
+        "Thank you for your message! We'll get back to you within 24 hours."
+      );
       reset();
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       toast.error("Failed to send message. Please try again.");
     }
@@ -100,7 +102,7 @@ export default function ContactPage() {
             Get in Touch
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Have questions, suggestions, or need support? We're here to help! 
+            Have questions, suggestions, or need support? We're here to help!
             Reach out to us and we'll respond as soon as possible.
           </p>
         </div>
@@ -113,7 +115,10 @@ export default function ContactPage() {
             {contactInfo.map((info) => {
               const IconComponent = info.icon;
               return (
-                <Card key={info.title} className="text-center hover:shadow-lg transition-shadow duration-300">
+                <Card
+                  key={info.title}
+                  className="text-center hover:shadow-lg transition-shadow duration-300"
+                >
                   <CardContent className="p-6">
                     <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                       <IconComponent className="w-8 h-8 text-primary" />
@@ -147,10 +152,12 @@ export default function ContactPage() {
                 Fill out the form below and we'll get back to you promptly
               </p>
             </div>
-            
+
             <Card>
               <CardHeader>
-                <CardTitle className="text-2xl text-center">Contact Form</CardTitle>
+                <CardTitle className="text-2xl text-center">
+                  Contact Form
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -164,10 +171,12 @@ export default function ContactPage() {
                         className={errors.name ? "border-red-500" : ""}
                       />
                       {errors.name && (
-                        <p className="text-red-500 text-sm">{errors.name.message}</p>
+                        <p className="text-red-500 text-sm">
+                          {errors.name.message}
+                        </p>
                       )}
                     </div>
-                    
+
                     <div className="space-y-2">
                       <Label htmlFor="email">Email Address *</Label>
                       <Input
@@ -178,11 +187,13 @@ export default function ContactPage() {
                         className={errors.email ? "border-red-500" : ""}
                       />
                       {errors.email && (
-                        <p className="text-red-500 text-sm">{errors.email.message}</p>
+                        <p className="text-red-500 text-sm">
+                          {errors.email.message}
+                        </p>
                       )}
                     </div>
                   </div>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="phone">Phone Number</Label>
@@ -194,10 +205,12 @@ export default function ContactPage() {
                         className={errors.phone ? "border-red-500" : ""}
                       />
                       {errors.phone && (
-                        <p className="text-red-500 text-sm">{errors.phone.message}</p>
+                        <p className="text-red-500 text-sm">
+                          {errors.phone.message}
+                        </p>
                       )}
                     </div>
-                    
+
                     <div className="space-y-2">
                       <Label htmlFor="inquiryType">Inquiry Type *</Label>
                       <select
@@ -213,7 +226,7 @@ export default function ContactPage() {
                       </select>
                     </div>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label htmlFor="subject">Subject *</Label>
                     <Input
@@ -223,10 +236,12 @@ export default function ContactPage() {
                       className={errors.subject ? "border-red-500" : ""}
                     />
                     {errors.subject && (
-                      <p className="text-red-500 text-sm">{errors.subject.message}</p>
+                      <p className="text-red-500 text-sm">
+                        {errors.subject.message}
+                      </p>
                     )}
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label htmlFor="message">Message *</Label>
                     <textarea
@@ -234,17 +249,21 @@ export default function ContactPage() {
                       {...register("message")}
                       rows={6}
                       placeholder="Tell us how we can help you..."
-                      className={`flex min-h-[60px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm resize-none ${errors.message ? "border-red-500" : ""}`}
+                      className={`flex min-h-[60px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm resize-none ${
+                        errors.message ? "border-red-500" : ""
+                      }`}
                     />
                     {errors.message && (
-                      <p className="text-red-500 text-sm">{errors.message.message}</p>
+                      <p className="text-red-500 text-sm">
+                        {errors.message.message}
+                      </p>
                     )}
                   </div>
-                  
+
                   <div className="text-center">
-                    <Button 
-                      type="submit" 
-                      size="lg" 
+                    <Button
+                      type="submit"
+                      size="lg"
                       disabled={isSubmitting}
                       className="min-w-32"
                     >
