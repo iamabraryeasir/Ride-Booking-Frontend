@@ -1,69 +1,145 @@
-# React + TypeScript + Vite
+# 🚖 RideMate – Ride Hailing Platform (Frontend)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+🔗 **Live Demo**: [https://ride-booking-frontend-ebon.vercel.app](https://ride-booking-frontend-ebon.vercel.app)
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 📌 Project Overview
 
-## Expanding the ESLint configuration
+RideMate is a **full-featured ride-hailing frontend application** built using **React.js, Redux Toolkit with RTK Query, React Router, and React Hot Toast**.  
+It provides **role-based dashboards** and **dynamic features** for Riders, Drivers, and Admins, ensuring a seamless user experience across devices.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+This project demonstrates **responsive UI/UX, authentication, error handling, state management, and data visualization** with a focus on performance and accessibility.
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+## ✨ Features
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 🔓 Public Pages
+
+-   **Home Page** with 5+ structured sections (Hero, How it Works, Services, Testimonials, CTA).
+-   **About Us** with company mission and team profiles.
+-   **Features** page describing Rider, Driver, and Admin capabilities.
+-   **Contact Page** with validated form (simulated submission).
+-   **FAQ** section with search functionality.
+
+### 🔐 Authentication & Authorization
+
+-   JWT-based **Login/Registration** with role selection (Rider/Driver/Admin).
+-   Persistent authentication across sessions.
+-   Blocked/Suspended accounts redirected to status page.
+-   Driver “Offline” mode supported.
+-   Secure **Logout** functionality.
+
+### 👤 Rider Features
+
+-   Ride Request form with fare estimation & payment options.
+-   Ride History with search & filters.
+-   Ride Details page (map, driver info, timeline).
+-   Profile management (edit name, phone, password).
+-   **Optional** live ride tracking.
+
+### 🚗 Driver Features
+
+-   Toggle **Online/Offline** availability.
+-   Accept/Reject incoming ride requests.
+-   Active Ride Management (status updates).
+-   Earnings Dashboard with charts (daily, weekly, monthly).
+-   Ride History with pagination and filters.
+-   Profile management (vehicle, contact info, password).
+
+### 🛠 Admin Features
+
+-   User Management (search, filter, block/unblock, approve/suspend).
+-   Ride Oversight with advanced filtering.
+-   Analytics Dashboard (ride volume, revenue trends, driver activity).
+-   Consistent search & filter tools.
+-   Profile management.
+
+### 🚨 Emergency / SOS Feature
+
+-   Floating SOS button during active rides.
+-   Options: Call Police, Notify Emergency Contact, Share Live Location.
+-   Live GPS sharing via **WhatsApp/SMS/Email API**.
+-   Pre-set emergency contact management in Settings → Safety.
+-   Clear visual feedback (“Emergency contact notified”).
+
+### 🎨 General UI/UX
+
+-   Responsive design for mobile, tablet, desktop.
+-   Sticky Navbar & themed Footer.
+-   Role-based navigation with profile dropdown.
+-   Interactive UI (carousels, ride cards, charts).
+-   Skeleton loaders & lazy-loading heavy assets.
+-   Global error handling + success/error toast notifications.
+-   Accessibility-compliant components.
+
+---
+
+## 🛠️ Technology Stack
+
+-   **Frontend Framework**: React.js
+-   **State Management**: Redux Toolkit + RTK Query
+-   **Routing**: React Router
+-   **Notifications**: React Hot Toast
+-   **Charts & Data Viz**: Recharts / Chart.js
+-   **Maps & Geolocation**: Leaflet / react-geolocated
+-   **Emergency Communication**: tel:, EmailJS, WhatsApp API, Twilio
+-   **UI Enhancements**: TailwindCSS / Material UI (if used)
+
+---
+
+## ⚙️ Setup Instructions
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/your-username/ridemate-frontend.git
+cd ridemate-frontend
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 2. Install Dependencies
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
+
+### 3. Environment Variables
+
+Create a `.env` file in the root and configure:
+
+```env
+VITE_BASE_URL=your-backend-api-url
+```
+
+### 4. Run the Project
+
+```bash
+npm start
+```
+
+The app will start at **http://localhost:5173/**
+
+### 5. Build for Production
+
+```bash
+npm run build
+```
+
+---
+
+## ⚠️ Notes
+
+-   Proper **form validation & error handling** implemented (API, forms, unauthorized access).
+-   Toast notifications for success & error states.
+-   All links, buttons, and forms are fully functional.
+-   Realistic seed data provided to replace placeholders.
+
+---
+
+## 🚀 Future Improvements
+
+-   Payment gateway integration (Stripe/PayPal).
+-   Push notifications for ride updates.
+-   Multi-language support.
+-   Dark mode toggle.
