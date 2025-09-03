@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 import { Outlet, Link, useNavigate, useLocation } from "react-router";
 import { useSelector } from "react-redux";
-import { 
-  Menu, 
-  X, 
-  Home, 
-  User, 
-  Settings, 
-  LogOut, 
+import {
+  Menu,
+  X,
+  Home,
+  User,
+  Settings,
+  LogOut,
   Bell,
   Search,
-  ChevronDown
+  ChevronDown,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -20,9 +20,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Card } from "@/components/ui/card";
 
-import { selectCurrentUser, selectUserRole } from "@/redux/features/auth/authSlice";
+import {
+  selectCurrentUser,
+  selectUserRole,
+} from "@/redux/features/auth/authSlice";
 import { useLogoutMutation } from "@/redux/features/auth/auth.api";
 import { ROLES } from "@/constants/role";
 import Logo from "@/assets/Logo";
@@ -30,15 +32,17 @@ import toast from "react-hot-toast";
 
 // Navigation items based on user role
 const getNavigationItems = (role: string) => {
-  const commonItems = [
-    { href: "/dashboard", label: "Dashboard", icon: Home }
-  ];
+  const commonItems = [{ href: "/dashboard", label: "Dashboard", icon: Home }];
 
   const roleSpecificItems = {
     [ROLES.RIDER]: [
       { href: "/dashboard/book-ride", label: "Book Ride", icon: "🚗" },
       { href: "/dashboard/rides", label: "My Rides", icon: "📋" },
-      { href: "/dashboard/payment-methods", label: "Payment Methods", icon: "💳" },
+      {
+        href: "/dashboard/payment-methods",
+        label: "Payment Methods",
+        icon: "💳",
+      },
       { href: "/dashboard/profile", label: "Profile", icon: User },
     ],
     [ROLES.DRIVER]: [
@@ -53,10 +57,14 @@ const getNavigationItems = (role: string) => {
       { href: "/dashboard/rides", label: "All Rides", icon: "📋" },
       { href: "/dashboard/analytics", label: "Analytics", icon: "📊" },
       { href: "/dashboard/profile", label: "Profile", icon: User },
-    ]
+    ],
   };
 
-  return [...commonItems, ...(roleSpecificItems[role] || [])];
+  // Fix: Use keyof typeof ROLES for type safety
+  return [
+    ...commonItems,
+    ...(roleSpecificItems[role as keyof typeof ROLES] || []),
+  ];
 };
 
 interface DashboardLayoutProps {
@@ -78,6 +86,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       await logout().unwrap();
       toast.success("Logged out successfully");
       navigate("/");
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       toast.error("Logout failed");
       // Force logout on client side even if server call fails
@@ -96,17 +105,19 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     <div className="min-h-screen bg-background flex">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar */}
-      <aside className={`
+      <aside
+        className={`
         fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0
         ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
-      `}>
+      `}
+      >
         <div className="flex flex-col h-full">
           {/* Logo and close button */}
           <div className="flex items-center justify-between p-4 border-b">
@@ -160,7 +171,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-medium truncate">{user?.name}</div>
-                <div className="text-xs text-gray-500 truncate capitalize">{user?.role?.toLowerCase()}</div>
+                <div className="text-xs text-gray-500 truncate capitalize">
+                  {user?.role?.toLowerCase()}
+                </div>
               </div>
             </div>
             <Button
@@ -221,15 +234,21 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                   </div>
                   <div className="max-h-64 overflow-y-auto">
                     <div className="p-4 border-b hover:bg-gray-50">
-                      <div className="text-sm font-medium mb-1">New ride request</div>
+                      <div className="text-sm font-medium mb-1">
+                        New ride request
+                      </div>
                       <div className="text-xs text-gray-500">2 minutes ago</div>
                     </div>
                     <div className="p-4 border-b hover:bg-gray-50">
-                      <div className="text-sm font-medium mb-1">Payment completed</div>
+                      <div className="text-sm font-medium mb-1">
+                        Payment completed
+                      </div>
                       <div className="text-xs text-gray-500">1 hour ago</div>
                     </div>
                     <div className="p-4 hover:bg-gray-50">
-                      <div className="text-sm font-medium mb-1">Profile updated</div>
+                      <div className="text-sm font-medium mb-1">
+                        Profile updated
+                      </div>
                       <div className="text-xs text-gray-500">3 hours ago</div>
                     </div>
                   </div>
@@ -284,9 +303,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         </header>
 
         {/* Page content */}
-        <main className="flex-1 p-4 lg:p-6">
-          {children || <Outlet />}
-        </main>
+        <main className="flex-1 p-4 lg:p-6">{children || <Outlet />}</main>
       </div>
     </div>
   );
